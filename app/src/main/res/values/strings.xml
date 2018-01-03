@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">MyMoneyTraker</string>
+    <string name="addHintName">Название</string>
+    <string name="addHintPrice">0₽</string>
+    <string name="currencySymbol">₽</string>
+
+    <string name="tab_expenses">расходы</string>
+    <string name="tab_incomes">доходы</string>
+    <string name="tab_balance">баланс</string>
+
+    <string-array name="tabs_titles">
+        <item>@string/tab_expenses</item>
+        <item>@string/tab_incomes</item>
+        <item>@string/tab_balance</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 </resources>
