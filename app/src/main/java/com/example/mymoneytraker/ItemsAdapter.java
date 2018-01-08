@@ -1,12 +1,10 @@
 package com.example.mymoneytraker;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,27 +17,16 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
 
     private static final String TAG = "ItemsAdapter";
 
-    private Context context;
     private List<Item> items = new ArrayList<>();
+    private ItemsAdapterListener listener = null;
 
-    ItemsAdapter(Context context) {
-        this.context = context;
-        items.add(new Item("Moloko", 35));
-        items.add(new Item("game", 3500));
-        items.add(new Item("way", 3500));
-        items.add(new Item("goods", 10000));
-        items.add(new Item("Moloko", 35));
-        items.add(new Item("game", 3500));
-        items.add(new Item("way", 3500));
-        items.add(new Item("goods", 10000));
-        items.add(new Item("Moloko", 35));
-        items.add(new Item("game", 3500));
-        items.add(new Item("way", 3500));
-        items.add(new Item("goods", 10000));
-        items.add(new Item("Moloko", 35));
-        items.add(new Item("game", 3500));
-        items.add(new Item("way", 3500));
-        items.add(new Item("goods", 10000));
+    public void setItems(List<Item> items) {
+        this.items = items;
+        notifyDataSetChanged();
+    }
+
+    public void setListener(ItemsAdapterListener listener){
+        this.listener = listener;
     }
 
     @Override
@@ -49,18 +36,14 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder: ");
-
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
         return new ItemViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ItemViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder: ");
-
         Item item = items.get(position);
-        holder.bind(item, context);
+        holder.bind(item, position, listener);
     }
 
     static class ItemViewHolder extends RecyclerView.ViewHolder{
@@ -76,11 +59,26 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
 
         }
 
-        void bind(Item item, Context context){
-            Spannable priceText = new SpannableString(String.valueOf(item.getPrice()) + context.getResources().getString(R.string.currencySymbol));
+        void bind(final Item item, final int position, final ItemsAdapterListener listener){
+            Spannable priceText = new SpannableString(String.valueOf(item.price) + itemView.getResources().getString(R.string.currencySymbol));
             priceText.setSpan(new RelativeSizeSpan(0.75f), priceText.length()-1, priceText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             price.setText(priceText);
-            name.setText(item.getName());
+            name.setText(item.name);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(item, position);
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    listener.onItemLongClick(item, position);
+                    return true;
+                }
+            });
         }
     }
 }

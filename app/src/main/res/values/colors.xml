@@ -2,10 +2,11 @@
 <resources>
     <color name="colorPrimary">#95c9b8</color>
     <color name="colorPrimaryDark">#88B6A7</color>
-    <color name="colorAccent">#FFFF8E</color>
+    <color name="colorAccent">#1CA498</color>
 
     <color name="unselectedTabText">#dbece6</color>
     <color name="white">#ffffff</color>
+    <color name="tabIndicatorColor">#FFFF8E</color>
     <color name="itemNameBg">#ffb514</color>
     <color name="itemPriceBg">#e5a212</color>
 </resources>

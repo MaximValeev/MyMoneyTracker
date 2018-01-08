@@ -1,8 +1,10 @@
 package com.example.mymoneytraker;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -10,19 +12,31 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.RelativeSizeSpan;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 public class AddActivity extends AppCompatActivity {
 
+    public static final String EXTRA_TYPE = "type";
+    public static final String RESULT_ITEM = "item";
+    public static final int RC_ITEM_ADD = 99;
+
+
     EditText addTitle;
     EditText addPrice;
     ImageButton addBtn;
+    String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense_income);
+
+        Toolbar toolbar = findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         addTitle = findViewById(R.id.addTitle);
         addPrice = findViewById(R.id.addPrice);
@@ -62,6 +76,17 @@ public class AddActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+
+        type = getIntent().getStringExtra(EXTRA_TYPE);
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent result = new Intent();
+                result.putExtra(RESULT_ITEM, new Item(addTitle.getText().toString(), Integer.parseInt(addPrice.getText().toString()), type));
+                setResult(RESULT_OK, result);
+                finish();
             }
         });
     }

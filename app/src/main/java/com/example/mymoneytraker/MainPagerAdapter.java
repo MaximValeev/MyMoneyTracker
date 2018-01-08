@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
+    private static final String TAG = "MainPagerAdapter";
+
     private final static int PAGE_EXPENSES = 0;
     private final static int PAGE_INCOMES = 1;
     private final static int PAGE_BALANCE = 2;
@@ -15,7 +17,6 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
     MainPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
-
         tabsTitles = context.getResources().getStringArray(R.array.tabs_titles);
     }
 
@@ -24,10 +25,10 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
         switch (position){
             case PAGE_EXPENSES: {
-                return ItemFragment.createItemFragment(ItemFragment.TYPE_EXPENSES);
+                return ItemsFragment.createItemFragment(Item.TYPE_EXPENSES);
             }
             case PAGE_INCOMES: {
-                return ItemFragment.createItemFragment(ItemFragment.TYPE_INCOME);
+                return ItemsFragment.createItemFragment(Item.TYPE_INCOME);
             }
             case PAGE_BALANCE:
                 return new BalanceFragment();
