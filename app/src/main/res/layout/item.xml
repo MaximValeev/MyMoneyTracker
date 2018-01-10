@@ -9,13 +9,13 @@
     android:layout_marginRight="10dp"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
-    android:foreground="?android:selectableItemBackground">
+    android:foreground="?android:selectableItemBackground"
+    android:background="@drawable/item_bg">
 
     <TextView
         style="@style/ItemElement"
         android:id="@+id/itemName"
         android:textSize="20sp"
-        android:background="@color/itemNameBg"
         tools:text="молоко"
         android:layout_width="0dp"
         android:layout_weight="1"/>
@@ -24,7 +24,7 @@
         style="@style/ItemElement"
         android:id="@+id/itemPrice"
         android:textSize="24sp"
-        android:background="@color/itemPriceBg"
+        android:background="@color/itemShadow"
         tools:text="35₽"
         android:layout_width="wrap_content"/>
 

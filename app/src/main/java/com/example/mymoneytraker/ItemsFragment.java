@@ -15,7 +15,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +42,7 @@ public class ItemsFragment extends Fragment {
 
     private ItemsAdapter adapter;
     private Api api;
+    FloatingActionButton fab;
 
     private ActionMode actionMode;
 
@@ -84,24 +84,38 @@ public class ItemsFragment extends Fragment {
         RecyclerView recycler = view.findViewById(R.id.recycler);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         recycler.setAdapter(adapter);
+
         adapter.setListener(new ItemsAdapterListener() {
             @Override
             public void onItemClick(Item item, int position) {
                 Log.d(TAG, "onItemClick: name = " + item.name + "position = " + position);
+                if (isInActionMode()) {
+                    toggleSelection(position);
+                }
             }
 
             @Override
             public void onItemLongClick(Item item, int position) {
                 Log.d(TAG, "onItemLongClick: name = " + item.name + "position = " + position);
-                if(actionMode != null){
+                if(isInActionMode()){
                     return;
                 }
 
                 actionMode = ((AppCompatActivity)getActivity()).startSupportActionMode(actionModeCallback);
+                toggleSelection(position);
+            }
+
+            private void toggleSelection(int position){
+                adapter.toggleSelection(position);
+                actionMode.setTitle(getString(R.string.selected_title_action_mod) + adapter.getSelectedItemsCount());
+            }
+
+            private boolean isInActionMode(){
+                return actionMode != null;
             }
         });
 
-        FloatingActionButton fab = view.findViewById(R.id.fab_add);
+        fab = view.findViewById(R.id.fab_add);
         fab.setVisibility(View.VISIBLE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,7 +220,7 @@ public class ItemsFragment extends Fragment {
         }).forceLoad();
     }
 
-     private void showError(String error){
+    private void showError(String error){
          Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
      }
 
@@ -224,11 +238,18 @@ public class ItemsFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
     }
 
+    private void removeSelectedItems(){
+        for (int i = adapter.getSelectedItems().size() -1; i >= 0; i--){
+            adapter.remove(adapter.getSelectedItems().get(i));
+        }
+    }
+
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.items_menu, menu);
+            actionMode = mode;
+            actionMode.getMenuInflater().inflate(R.menu.items_menu, menu);
+            fab.setVisibility(View.GONE);
             return true;
         }
 
@@ -239,12 +260,38 @@ public class ItemsFragment extends Fragment {
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            return false;
+            switch (item.getItemId()){
+                case R.id.menu_remove:
+                    showDialog();
+                    return true;
+
+                default:
+                    return false;
+            }
         }
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             actionMode = null;
+            fab.setVisibility(View.VISIBLE);
+            adapter.clearSelections();
         }
     };
+
+    private void showDialog(){
+        ConfirmationDialog dialog = new ConfirmationDialog();
+        dialog.setDialogListener(new ConfirmationDialogListener() {
+            @Override
+            public void onPositiveClick() {
+                removeSelectedItems();
+                actionMode.finish();
+            }
+
+            @Override
+            public void onDismissClick() {
+                actionMode.finish();
+            }
+        });
+        dialog.show(getFragmentManager(), "Confirmation");
+    }
 }

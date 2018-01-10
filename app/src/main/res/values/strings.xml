@@ -21,6 +21,8 @@
     <string name="addActivity_label">Новая запись</string>
     <string name="mainActivity_label">Учёт бюджета</string>
     <string name="menu_remove_title">Удалить</string>
+    <string name="remove_confirmation_dialog">Удалить объекты?</string>
+    <string name="selected_title_action_mod">Выделено: \u0020</string>
 
 
 </resources>
