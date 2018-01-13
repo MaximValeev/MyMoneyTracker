@@ -41,11 +41,11 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return tabsTitles.length;
-//        return tabsTitles.length;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
         return tabsTitles[position];
     }
+
 }

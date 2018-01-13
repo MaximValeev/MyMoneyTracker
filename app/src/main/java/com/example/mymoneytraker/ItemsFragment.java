@@ -25,6 +25,7 @@ import com.example.mymoneytraker.api.Api;
 import com.example.mymoneytraker.api.Result;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -39,6 +40,8 @@ public class ItemsFragment extends Fragment {
 
     private static final String KEY_TYPE = "TYPE";
     private static String type = Item.TYPE_UNKNOWN;
+    private static final String ACTION_MODE_KEY_STATE = "actionModeState";
+    private static final String ACTION_MODE_SELECTED = "some selected";
 
     private ItemsAdapter adapter;
     private Api api;
@@ -69,13 +72,37 @@ public class ItemsFragment extends Fragment {
 
     }
 
+    //TODO: actionMode when fragment change
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(actionMode != null){
+            outState.putBoolean(ACTION_MODE_KEY_STATE, true);
+            outState.putIntegerArrayList(ACTION_MODE_SELECTED, (ArrayList<Integer>)adapter.getSelectedItems());
 
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null && savedInstanceState.getBoolean(ACTION_MODE_KEY_STATE)) {
+            actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(actionModeCallback);
+
+            ArrayList<Integer> list = savedInstanceState.getIntegerArrayList(ACTION_MODE_SELECTED);
+            if(list != null){
+                for(int i : list){
+                    adapter.toggleSelection(i);
+                }
+            }
+
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_items, container, false);
-
     }
 
     @Override
@@ -120,7 +147,7 @@ public class ItemsFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddActivity.class);
+                final Intent intent = new Intent(getActivity(), AddActivity.class);
                 intent.putExtra(AddActivity.EXTRA_TYPE, type);
                 startActivityForResult(intent, AddActivity.RC_ITEM_ADD);
             }
@@ -233,11 +260,6 @@ public class ItemsFragment extends Fragment {
         }
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-    }
-
     private void removeSelectedItems(){
         for (int i = adapter.getSelectedItems().size() -1; i >= 0; i--){
             adapter.remove(adapter.getSelectedItems().get(i));
@@ -294,4 +316,5 @@ public class ItemsFragment extends Fragment {
         });
         dialog.show(getFragmentManager(), "Confirmation");
     }
+
 }

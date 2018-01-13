@@ -34,6 +34,8 @@
             android:layout_weight="1"
             android:background="@null"
             android:hint="@string/addHintName"
+            android:textColorHint="@color/EditText_hint_color"
+            android:textColor="@color/EditText_color"
             android:inputType="text"
             android:maxLength="15"
             android:maxLines="1" />
@@ -45,6 +47,8 @@
             android:layout_weight="1"
             android:background="@null"
             android:hint="@string/addHintPrice"
+            android:textColorHint="@color/EditText_hint_color"
+            android:textColor="@color/EditText_color"
             android:inputType="number"
             android:maxLength="8"
             android:textAlignment="center" />

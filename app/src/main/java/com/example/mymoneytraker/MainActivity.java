@@ -22,6 +22,5 @@ public class MainActivity extends AppCompatActivity {
 
         pager.setAdapter(new MainPagerAdapter(getSupportFragmentManager(), this));
         tabs.setupWithViewPager(pager);
-
     }
 }

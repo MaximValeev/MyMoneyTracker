@@ -13,4 +13,6 @@
     <color name="itemColor">#fcc31e</color>
     <color name="itemShadow">#30303030</color>
     <color name="itemSelectedColor">#985305</color>
+    <color name="EditText_hint_color">#95989a</color>
+    <color name="EditText_color">#000000</color>
 </resources>
