@@ -15,6 +15,7 @@ import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class AddActivity extends AppCompatActivity {
 
@@ -35,12 +36,12 @@ public class AddActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         addTitle = findViewById(R.id.addTitle);
         addPrice = findViewById(R.id.addPrice);
-        Spannable priceText = new SpannableString(0 + getResources().getString(R.string.currencySymbol));
+        final Spannable priceText = new SpannableString(0 + getResources().getString(R.string.currencySymbol));
         priceText.setSpan(new RelativeSizeSpan(0.75f), priceText.length()-1, priceText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         addPrice.setHint(priceText);
         addBtn = findViewById(R.id.addButton);
@@ -83,10 +84,16 @@ public class AddActivity extends AppCompatActivity {
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent result = new Intent();
-                result.putExtra(RESULT_ITEM, new Item(addTitle.getText().toString(), Integer.parseInt(addPrice.getText().toString()), type));
-                setResult(RESULT_OK, result);
-                finish();
+                if (addPrice.getText().toString().isEmpty() || addTitle.getText().toString().isEmpty()){
+                    showError(getString(R.string.type_extense_income_sum_and_title));
+                } else if(addPrice.getText().toString().equals("0")){
+                    showError(getString(R.string.sum_is_not_null));
+                } else {
+                    Intent result = new Intent();
+                    result.putExtra(RESULT_ITEM, new Item(addTitle.getText().toString(), Integer.parseInt(addPrice.getText().toString()), type));
+                    setResult(RESULT_OK, result);
+                    finish();
+                }
             }
         });
     }
@@ -101,4 +108,7 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
+    private void showError(String error){
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+    }
 }

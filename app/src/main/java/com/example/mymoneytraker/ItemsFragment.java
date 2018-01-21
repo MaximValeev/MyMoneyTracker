@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,11 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.mymoneytraker.api.AddResult;
 import com.example.mymoneytraker.api.Api;
-import com.example.mymoneytraker.api.Result;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +43,9 @@ public class ItemsFragment extends Fragment {
     private static final String ACTION_MODE_KEY_STATE = "actionModeState";
     private static final String ACTION_MODE_SELECTED = "some selected";
 
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
+
     private ItemsAdapter adapter;
     private Api api;
     FloatingActionButton fab;
@@ -60,9 +63,10 @@ public class ItemsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("items");
 
         type = getArguments().getString(KEY_TYPE, Item.TYPE_UNKNOWN);
-
         if(type.equals(Item.TYPE_UNKNOWN)){
             throw new IllegalStateException("Unknown type");
         }
@@ -157,94 +161,34 @@ public class ItemsFragment extends Fragment {
     }
 
     private void loadItems(){
-        getLoaderManager().restartLoader(LOADER_ITEMS, null, new LoaderManager.LoaderCallbacks<List<Item>>() {
+        Query myQuery = myRef;
+        myQuery.addValueEventListener(new ValueEventListener() {
             @Override
-            public Loader<List<Item>> onCreateLoader(int id, Bundle args) {
-                return new AsyncTaskLoader<List<Item>>(getContext()) {
-                    @Override
-                    public List<Item> loadInBackground() {
-                        try {
-                            return api.items(type).execute().body();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    }
-                };
-            }
-
-            @Override
-            public void onLoadFinished(Loader<List<Item>> loader, List<Item> items) {
-                if (items == null) {
-                    showError(getString(R.string.error));
-                } else {
-                    adapter.setItems(items);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Item> itemsList = new ArrayList<>();
+                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                    String key = snapshot.getKey();
+                    Item item = snapshot.getValue(Item.class);
+                    if(item != null)item.setId(key);
+                    itemsList.add(item);
                 }
+                adapter.setItems(itemsList);
             }
 
             @Override
-            public void onLoaderReset(Loader<List<Item>> loader) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
-        }).forceLoad();
+        });
     }
 
     private void addItem(final Item item){
-        getLoaderManager().restartLoader(LOADER_ADD, null, new LoaderManager.LoaderCallbacks<AddResult>() {
-            @Override
-            public Loader<AddResult> onCreateLoader(int id, Bundle args) {
-                return new AsyncTaskLoader<AddResult>(getContext()) {
-                    @Override
-                    public AddResult loadInBackground() {
-                        try {
-                            return api.add(item.name, item.price, item.type).execute().body();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    }
-                };
-            }
-
-            @Override
-            public void onLoadFinished(Loader<AddResult> loader, AddResult data) {
-                //TODO: тут обновляем адаптер новыми айтемами
-            }
-
-            @Override
-            public void onLoaderReset(Loader<AddResult> loader) {
-
-            }
-        }).forceLoad();
+        Log.d(TAG, "addItem: "+item.name + " " + item.price);
+        myRef.push().setValue(item);
     }
 
-    private void removeItem(final Item item){
-        getLoaderManager().restartLoader(LOADER_REMOVE, null, new LoaderManager.LoaderCallbacks<Result>() {
-            @Override
-            public Loader<Result> onCreateLoader(int id, Bundle args) {
-                return new AsyncTaskLoader<Result>(getContext()) {
-                    @Override
-                    public Result loadInBackground() {
-                        try {
-                            return api.remove(item.id).execute().body();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    }
-                };
-            }
-
-            @Override
-            public void onLoadFinished(Loader<Result> loader, Result data) {
-
-            }
-
-            @Override
-            public void onLoaderReset(Loader<Result> loader) {
-
-            }
-        }).forceLoad();
+    private void removeItem(List<Item> itemsList) {
+        for(Item item: itemsList) myRef.child(item.id).removeValue();
     }
 
     private void showError(String error){
@@ -256,14 +200,18 @@ public class ItemsFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == AddActivity.RC_ITEM_ADD && resultCode == RESULT_OK){
             Item item = (Item) data.getSerializableExtra(AddActivity.RESULT_ITEM);
+            addItem(item);
             Toast.makeText(getContext(), item.name + " " + item.price, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void removeSelectedItems(){
+        List<Item> items = new ArrayList<>();
+        items.clear();
         for (int i = adapter.getSelectedItems().size() -1; i >= 0; i--){
-            adapter.remove(adapter.getSelectedItems().get(i));
+           items.add(adapter.remove(adapter.getSelectedItems().get(i)));
         }
+        removeItem(items);
     }
 
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
@@ -318,3 +266,37 @@ public class ItemsFragment extends Fragment {
     }
 
 }
+
+
+//    private void loadItems(){
+//        getLoaderManager().restartLoader(LOADER_ITEMS, null, new LoaderManager.LoaderCallbacks<List<Item>>() {
+//            @Override
+//            public Loader<List<Item>> onCreateLoader(int id, Bundle args) {
+//                return new AsyncTaskLoader<List<Item>>(getContext()) {
+//                    @Override
+//                    public List<Item> loadInBackground() {
+//                        try {
+//                            return api.items(type).execute().body();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                            return null;
+//                        }
+//                    }
+//                };
+//            }
+//
+//            @Override
+//            public void onLoadFinished(Loader<List<Item>> loader, List<Item> items) {
+//                if (items == null) {
+//                    showError(getString(R.string.error));
+//                } else {
+//                    adapter.setItems(items);
+//                }
+//            }
+//
+//            @Override
+//            public void onLoaderReset(Loader<List<Item>> loader) {
+//
+//            }
+//        }).forceLoad();
+//    }
