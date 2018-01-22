@@ -23,6 +23,8 @@
     <string name="menu_remove_title">Удалить</string>
     <string name="remove_confirmation_dialog">Удалить объекты?</string>
     <string name="selected_title_action_mod">Выделено: \u0020</string>
+    <string name="type_extense_income_sum_and_title">Введите сумму и название</string>
+    <string name="sum_is_not_null">Сумма не может быть нулем</string>
 
 
 </resources>

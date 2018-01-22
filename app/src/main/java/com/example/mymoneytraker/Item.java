@@ -1,15 +1,18 @@
 package com.example.mymoneytraker;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.io.Serializable;
 
+@IgnoreExtraProperties
 public class Item implements Serializable {
     static final String TYPE_UNKNOWN = "unknown";
     static final String TYPE_EXPENSES = "expense";
     static final String TYPE_INCOME = "income";
 
-    public int id = -1;
-    int price;
-    String name, type;
+    public String id;
+    public int price;
+    public String name, type;
 
     Item(String name, int price, String type) {
         this.price = price;
@@ -17,7 +20,9 @@ public class Item implements Serializable {
         this.type = type;
     }
 
-//    int getPrice() {
+    public Item() {
+    }
+    //    int getPrice() {
 //        return price;
 //    }
 //
@@ -32,4 +37,7 @@ public class Item implements Serializable {
 //    void setName(String name) {
 //        this.name = name;
 //    }
+    void setId(String id){
+        this.id = id;
+    }
 }

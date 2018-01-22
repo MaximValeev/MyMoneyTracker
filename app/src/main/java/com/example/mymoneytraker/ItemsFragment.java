@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.mymoneytraker.api.Api;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,6 +46,7 @@ public class ItemsFragment extends Fragment {
 
     private FirebaseDatabase database;
     private DatabaseReference myRef;
+    FirebaseAuth mAuth;
 
     private ItemsAdapter adapter;
     private Api api;
@@ -63,8 +65,9 @@ public class ItemsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("items");
+        myRef = database.getReference().child("users").child(mAuth.getUid());
 
         type = getArguments().getString(KEY_TYPE, Item.TYPE_UNKNOWN);
         if(type.equals(Item.TYPE_UNKNOWN)){

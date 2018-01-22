@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1074369060898",
+    "firebase_url": "https://fir-mymoneytracker.firebaseio.com",
+    "project_id": "firebase-mymoneytracker",
+    "storage_bucket": "firebase-mymoneytracker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074369060898:android:4e3df9f0eadabcde",
+        "android_client_info": {
+          "package_name": "com.example.mymoneytraker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1074369060898-59lm2gdrcm127qcl7hcsuepehpeivo0v.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "1074369060898-3a3li288kbq0jsf241oskh7fl976ks0h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mymoneytraker",
+            "certificate_hash": "bc038ad51e4a182a574cfba2a1568fcadd244a51"
+          }
+        },
+        {
+          "client_id": "1074369060898-psgpcdbp6gtnvugtfbl61d9evg21gdvc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDb8CoVxvKhFcPBjCgCHjOxnqFjbj7CPW8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
