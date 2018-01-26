@@ -65,6 +65,7 @@ public class AuthActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RC_SIGN_IN){
+            changeStateProgressBar();
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
@@ -77,7 +78,7 @@ public class AuthActivity extends AppCompatActivity {
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
-
+        changeStateProgressBar();
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -89,11 +90,11 @@ public class AuthActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             finish();
                         } else {
+                            changeStateProgressBar();
                             // If sign in fails, display a message to the user.
-                            progressBar.setVisibility(View.GONE);
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(AuthActivity.this, "Authentication Failed", Toast.LENGTH_SHORT).show();
-                            changeStateProgressBar();
+//                            changeStateProgressBar();
                         }
                     }
                 });

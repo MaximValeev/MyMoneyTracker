@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.mymoneytraker.api.Api;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+
+//import com.example.mymoneytraker.api.Api;
 
 public class ItemsFragment extends Fragment {
 
@@ -49,7 +50,7 @@ public class ItemsFragment extends Fragment {
     FirebaseAuth mAuth;
 
     private ItemsAdapter adapter;
-    private Api api;
+//    private Api api;
     FloatingActionButton fab;
 
     private ActionMode actionMode;
@@ -75,7 +76,7 @@ public class ItemsFragment extends Fragment {
         }
 
         adapter = new ItemsAdapter();
-        api = ((App) getActivity().getApplication()).getApi();
+//        api = ((App) getActivity().getApplication()).getApi();
 
     }
 
