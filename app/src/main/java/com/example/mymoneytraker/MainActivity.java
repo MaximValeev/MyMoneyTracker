@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() != null){
+                if (firebaseAuth.getCurrentUser() != null) {
                     pager.setAdapter(mainPagerAdapter);
                     tabs.setupWithViewPager(pager);
                 } else {
@@ -46,5 +46,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }
