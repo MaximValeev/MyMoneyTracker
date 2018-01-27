@@ -3,20 +3,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.mymoneytraker.AuthActivity">
+    tools:context="com.example.mymoneytraker.AuthActivity"
+    android:background="@color/colorPrimary">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/logo"
+            android:layout_marginTop="46dp"
+            android:layout_centerHorizontal="true"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/bg_intro"
+            android:layout_alignParentBottom="true"
+            android:scaleType="center"/>
+
+    </RelativeLayout>
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/signInBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:layout_marginBottom="25dp"/>
 
-    <ProgressBar
+    <FrameLayout
         android:id="@+id/progressBar"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:visibility="invisible">
+    <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="invisible"
-        tools:visibility="visible"/>
+        android:layout_marginBottom="25dp"/>
+    </FrameLayout>
+
 
 </FrameLayout>

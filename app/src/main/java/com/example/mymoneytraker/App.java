@@ -17,7 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class App extends Application {
 
 //    private Api api;
-    private final static String BASE_URL = "http://loftschoolandroid1117.getsandbox.com/";
+//    private final static String BASE_URL = "http://loftschoolandroid1117.getsandbox.com/";
 
     @Override
     public void onCreate() {

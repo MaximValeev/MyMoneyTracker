@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -28,7 +28,7 @@ public class AuthActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
     private GoogleSignInClient mGoogleSignInClient;
     private SignInButton signInBtn;
-    private ProgressBar progressBar;
+    private FrameLayout progressBar;
     private FirebaseAuth mAuth;
     private static final String TAG = "AuthActivity";
 
@@ -102,10 +102,8 @@ public class AuthActivity extends AppCompatActivity {
 
     private void changeStateProgressBar(){
         if(progressBar.getVisibility() == View.VISIBLE){
-            signInBtn.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
         } else {
-            signInBtn.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
         }
     }

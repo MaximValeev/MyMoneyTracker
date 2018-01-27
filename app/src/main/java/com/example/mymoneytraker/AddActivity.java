@@ -12,6 +12,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -92,6 +93,7 @@ public class AddActivity extends AppCompatActivity {
                     Intent result = new Intent();
                     result.putExtra(RESULT_ITEM, new Item(addTitle.getText().toString(), Integer.parseInt(addPrice.getText().toString()), type));
                     setResult(RESULT_OK, result);
+                    Log.d("TAG", "onClick: Item Type " + type );
                     finish();
                 }
             }
@@ -110,5 +112,14 @@ public class AddActivity extends AppCompatActivity {
 
     private void showError(String error){
         Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else super.onBackPressed();
+
+
     }
 }

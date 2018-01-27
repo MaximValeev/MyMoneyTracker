@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="minItemHeight">65dp</dimen>
+
+    <dimen name="balance_total_primary_text_size">50sp</dimen>
+    <dimen name="balance_total_comment_text_size">20sp</dimen>
+    <dimen name="balance_income_expense_text_size">24sp</dimen>
+    <dimen name="balance_income_expense_comment_text_size">13sp</dimen>
 </resources>

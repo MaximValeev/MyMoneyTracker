@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,19 +42,20 @@ public class ItemsFragment extends Fragment {
     private static final int LOADER_REMOVE = 2;
 
     private static final String KEY_TYPE = "TYPE";
-    private static String type = Item.TYPE_UNKNOWN;
+    private String type = Item.TYPE_UNKNOWN;
     private static final String ACTION_MODE_KEY_STATE = "actionModeState";
     private static final String ACTION_MODE_SELECTED = "some selected";
 
     private FirebaseDatabase database;
     private DatabaseReference myRef;
-    FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
 
     private ItemsAdapter adapter;
 //    private Api api;
-    FloatingActionButton fab;
 
-    private ActionMode actionMode;
+    ActionMode actionMode;
+    FloatingActionButton fab;
+    private SwipeRefreshLayout swipeRefresh;
 
     public static ItemsFragment createItemFragment(String type){
         ItemsFragment fragment = new ItemsFragment();
@@ -87,7 +89,6 @@ public class ItemsFragment extends Fragment {
         if(actionMode != null){
             outState.putBoolean(ACTION_MODE_KEY_STATE, true);
             outState.putIntegerArrayList(ACTION_MODE_SELECTED, (ArrayList<Integer>)adapter.getSelectedItems());
-
         }
     }
 
@@ -119,6 +120,14 @@ public class ItemsFragment extends Fragment {
         RecyclerView recycler = view.findViewById(R.id.recycler);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         recycler.setAdapter(adapter);
+        swipeRefresh = view.findViewById(R.id.swipeRefresh);
+        swipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadItems();
+            }
+        });
 
         adapter.setListener(new ItemsAdapterListener() {
             @Override
@@ -145,7 +154,7 @@ public class ItemsFragment extends Fragment {
                 actionMode.setTitle(getString(R.string.selected_title_action_mod) + adapter.getSelectedItemsCount());
             }
 
-            private boolean isInActionMode(){
+            boolean isInActionMode(){
                 return actionMode != null;
             }
         });
@@ -165,7 +174,7 @@ public class ItemsFragment extends Fragment {
     }
 
     private void loadItems(){
-        Query myQuery = myRef;
+        Query myQuery = myRef.orderByChild("type").equalTo(type);
         myQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -177,11 +186,12 @@ public class ItemsFragment extends Fragment {
                     itemsList.add(item);
                 }
                 adapter.setItems(itemsList);
+                swipeRefresh.setRefreshing(false);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                swipeRefresh.setRefreshing(false);
             }
         });
     }
@@ -195,17 +205,14 @@ public class ItemsFragment extends Fragment {
         for(Item item: itemsList) myRef.child(item.id).removeValue();
     }
 
-    private void showError(String error){
-         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        getFragmentManager().popBackStack();
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == AddActivity.RC_ITEM_ADD && resultCode == RESULT_OK){
             Item item = (Item) data.getSerializableExtra(AddActivity.RESULT_ITEM);
             addItem(item);
-            Toast.makeText(getContext(), item.name + " " + item.price, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), item.name + " " + item.price + " " + item.type, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -269,38 +276,15 @@ public class ItemsFragment extends Fragment {
         dialog.show(getFragmentManager(), "Confirmation");
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(actionMode != null){
+            actionMode.finish();
+        }
+    }
+
+    private void showError(String error){
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+    }
 }
-
-
-//    private void loadItems(){
-//        getLoaderManager().restartLoader(LOADER_ITEMS, null, new LoaderManager.LoaderCallbacks<List<Item>>() {
-//            @Override
-//            public Loader<List<Item>> onCreateLoader(int id, Bundle args) {
-//                return new AsyncTaskLoader<List<Item>>(getContext()) {
-//                    @Override
-//                    public List<Item> loadInBackground() {
-//                        try {
-//                            return api.items(type).execute().body();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                            return null;
-//                        }
-//                    }
-//                };
-//            }
-//
-//            @Override
-//            public void onLoadFinished(Loader<List<Item>> loader, List<Item> items) {
-//                if (items == null) {
-//                    showError(getString(R.string.error));
-//                } else {
-//                    adapter.setItems(items);
-//                }
-//            }
-//
-//            @Override
-//            public void onLoaderReset(Loader<List<Item>> loader) {
-//
-//            }
-//        }).forceLoad();
-//    }

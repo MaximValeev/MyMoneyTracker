@@ -15,4 +15,9 @@
     <color name="itemSelectedColor">#985305</color>
     <color name="EditText_hint_color">#95989a</color>
     <color name="EditText_color">#000000</color>
+
+    <color name="balance_total_color">#3ab7ae</color>
+    <color name="balance_expense_color">#f76c41</color>
+    <color name="balance_income_color">#fcc31e</color>
+    <color name="balance_comments_color">#95989a</color>
 </resources>
