@@ -25,6 +25,7 @@ public class BalanceFragment extends Fragment {
     private TextView expense;
     private DiagramView diagram;
     private DatabaseReference mRef;
+    private String uId;
 
     public static BalanceFragment createFragment(){
         return new BalanceFragment();
@@ -35,7 +36,10 @@ public class BalanceFragment extends Fragment {
         super.onCreate(savedInstanceState);
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        mRef = database.getReference().child("users").child(mAuth.getUid());
+        if(mAuth.getCurrentUser() != null){
+            uId = mAuth.getCurrentUser().getUid();
+        }
+        mRef = database.getReference().child("users").child(uId);
     }
 
     @Override
